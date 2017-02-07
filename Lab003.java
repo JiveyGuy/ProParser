@@ -16,7 +16,7 @@ import java.util.Scanner;
 
 public class Lab003{
   
-  private static final boolean DEBUG = true; // Boolean var for dev purposes 
+  private static final boolean DEBUG = false; // Boolean var for dev purposes 
   
   
   
@@ -27,10 +27,12 @@ public class Lab003{
    */
   
   public static void main(String args[]){
-    String[] keywords = {""};
+    String[] keywords = {""}; //has to init keywords.
     try {
-      keywords = keywordsInput();
+      keywords = keywordsInput(); //gets keywords
       
+      
+      //Debug statement 
       if ( DEBUG ) {
         for ( String iterator : keywords ) {
           System.out.print(iterator + " "); 
@@ -42,39 +44,39 @@ public class Lab003{
       System.out.println("Keyword input failed"); 
     }
     
-    String[] output;
+    String[] output; //Declartion outside loop for this scope
     for ( String iterator : args ) {
       
       try {
-        output = parse(iterator, keywords);
-
+        output = parse(iterator, keywords); //calling main parse method, may throw an exception
+        
+        //Where we have more than one match
         if ( output.length > 1 ) {
-          System.out.print("Unable to parse " + iterator + "possible matches are: "); 
+          System.out.print("Unable to parse " + iterator + " possible matches are: "); 
           for ( String matches : output ) {
             
+            //debug statement
             if ( DEBUG ) System.out.println("output = " + matches);
             
-            System.out.print(matches + " ");
+            System.out.print(iterator.toUpperCase() + "[" + matches.replace(iterator.toUpperCase() , "")+ "] ");
           }
           System.out.println("");
-        } else {
-          
-          if ( DEBUG ) System.out.println("output = " + output[0]);
-          
+        } else {          
           System.out.println("Parsed " + iterator + " to match " + output[0]);
         } 
         
       } catch ( KeyWordInputException e ) {
         
+        //debug statement
         if ( DEBUG ) System.out.println("KeyWordInputException e thrown ");
         
-        continue; 
+        continue; //No valid input continue
       }
     }
   }
   
   
-   /**
+  /**
    * Parse method to check for keywords in input
    * @param     input String input from the command line
    * @exception KeyWordInputException
@@ -97,17 +99,18 @@ public class Lab003{
     input = input.toLowerCase(); 
     
     for ( String keyword : keywords ) {
-      if (input.length() != 0 && input.substring( 0 , Math.min(input.length(), keyword.length() ) ).equalsIgnoreCase(keyword.substring( 0 , Math.min(input.length(), keyword.length() ) ) ) ){
+      if (input.length() != 0 && input.substring( 0 , Math.min(input.length(), keyword.length() ) ).equalsIgnoreCase(keyword.substring( 0 , Math.min(input.length(), keyword.length() ) )  ) ) //main comparison statement
+      {
         hasMatch = true;
         processingInput += keyword + " ";
       }
     }
-    if ( !hasMatch ){
+    if ( !hasMatch ){ //If this input has no match then declare that
       System.out.println("Failed to parse " + input );
       throw new KeyWordInputException();
     }
     try { 
-      result = processingInput.split(" +"); 
+      result = processingInput.split(" +"); //Spliting on regular expression space
     } catch ( Exception e ) {
       result = new String[1];
       result[0] = processingInput.substring(0, processingInput.length() - 1);
@@ -124,6 +127,7 @@ public class Lab003{
    */
   
   public static String[] keywordsInput() throws KeyWordInputException{
+    //Debug statement
     if ( DEBUG ) {
       System.out.println("keywordsInput called");
     }
@@ -140,7 +144,7 @@ public class Lab003{
       
       result = processingInput.split(" +");
       return result;
-    } catch ( IOException e ) {
+    } catch ( IOException e ) { //Needed inorder to do file.io
       System.out.println("File Exception, problem with keywords.txt, does it exist?");
     }
     throw new KeyWordInputException();
