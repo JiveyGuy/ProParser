@@ -14,7 +14,7 @@ import java.util.Scanner;
  */
 
 
-public class Lab003{
+public class Lab002{
   
   private static final boolean DEBUG = false; // Boolean var for dev purposes 
   
