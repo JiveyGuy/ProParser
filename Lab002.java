@@ -11,6 +11,80 @@ import java.util.Scanner;
  * @version 1.0
  * @since   2017-02-06
  * 
+ * 
+ * The runtime of this program is F(n) = (n^2) + 10n + 4
+ *          ~The Big 0 time is 0() = n^2
+ * 
+ * 
+ * INPUT    =  java Lab002 restor loa exit foobar res
+ * 
+ * EXPECTED =  Parsed "restor" to mean RESTORE
+ *             Parsed "loa" to mean LOAD
+ *             Parsed "exit" to mean EXIT
+ *             Failed to parse "foobar"
+ *             Unable to parsed "res" - Possible keywords are: RESTO[RE], RESTA[RT]
+ * 
+ * OUTPUT   =  Parsed "restor" to mean RESTORE
+ *             Parsed "loa" to mean LOAD
+ *             Parsed "exit" to mean EXIT
+ *             Failed to parse "foobar"
+ *             Unable to parsed "res" - Possible keywords are: RESTO[RE], RESTA[RT]
+ * 
+ ***************************************************************************************************************************
+ * 
+ * INPUT    =  java Lab002 Input LOAD RELOAD RESTORE REUSE EXIT UNLOAD ADD SUBTRACT MULTIPLY DIVIDE REMAINDER RANDOM RESTART
+ * 
+ * EXPECTED =  Failed to parse input 
+ *             Parsed LOAD to match LOAD 
+ *             Parsed RELOAD to match RELOAD 
+ *             Parsed RESTORE to match RESTORE 
+ *             Parsed REUSE to match REUSE 
+ *             Parsed EXIT to match EXIT 
+ *             Parsed UNLOAD to match UNLOAD 
+ *             Parsed ADD to match ADD 
+ *             Parsed SUBTRACT to match SUBTRACT 
+ *             Parsed MULTIPLY to match MULTIPLY 
+ *             Parsed DIVIDE to match DIVIDE 
+ *             Parsed REMAINDER to match REMAINDER 
+ *             Parsed RANDOM to match RANDOM 
+ *             Parsed RESTART to match RESTART 
+ * 
+ * OUTPUT   =  Failed to parse input 
+ *             Parsed LOAD to match LOAD 
+ *             Parsed RELOAD to match RELOAD 
+ *             Parsed RESTORE to match RESTORE 
+ *             Parsed REUSE to match REUSE 
+ *             Parsed EXIT to match EXIT 
+ *             Parsed UNLOAD to match UNLOAD 
+ *             Parsed ADD to match ADD 
+ *             Parsed SUBTRACT to match SUBTRACT 
+ *             Parsed MULTIPLY to match MULTIPLY 
+ *             Parsed DIVIDE to match DIVIDE 
+ *             Parsed REMAINDER to match REMAINDER 
+ *             Parsed RANDOM to match RANDOM 
+ *             Parsed RESTART to match RESTART
+ * 
+ ***************************************************************************************************************************
+ * 
+ * INPUT    = !@#$%^12345
+ * EXPECTED = Failed to parse !@#$%^1234 
+ * OUTPUT   = Failed to parse !@#$%^1234 
+ * 
+ ***************************************************************************************************************************
+ * 
+ * INPUT    = java Lab002 restor loa exit foobar restarttttt
+ * 
+ * EXPECTED = Parsed restor to match RESTORE 
+ *            Parsed loa to match LOAD 
+ *            Parsed exit to match EXIT 
+ *            Failed to parse foobar 
+ *            Failed to parse restarttttt
+ * 
+ * OUTPUT   = Parsed restor to match RESTORE 
+ *            Parsed loa to match LOAD 
+ *            Parsed exit to match EXIT 
+ *            Failed to parse foobar 
+ *            Failed to parse restarttttt
  */
 
 
@@ -29,7 +103,7 @@ public class Lab002{
   public static void main(String args[]){
     String[] keywords = {""}; //has to init keywords.
     try {
-      keywords = keywordsInput(); //gets keywords
+      keywords = keywordsInput(true); //gets keywords
       
       
       //Debug statement 
@@ -84,7 +158,6 @@ public class Lab002{
    */
   
   public static String[] parse(String input, String[] keywords) throws KeyWordInputException{
-    
     if ( DEBUG ){  //Debug statement
       System.out.println("parse called with input = " + input + " and keywords " );
       for ( String iterator : keywords ) {
@@ -116,6 +189,16 @@ public class Lab002{
       result[0] = processingInput.substring(0, processingInput.length() - 1);
       return result;
     }
+    boolean isTooShort = false;
+    for( String iterator : result ) {
+      if(iterator.length() < input.length() ){
+        isTooShort = true;
+      }
+    } if ( isTooShort ) {
+      System.out.println("Failed to parse " + input );
+      throw new KeyWordInputException();
+    }
+    
     return result;
   }
   
@@ -126,7 +209,13 @@ public class Lab002{
    * @return     returns string[] of keywords from file. 
    */
   
-  public static String[] keywordsInput() throws KeyWordInputException{
+  public static String[] keywordsInput(boolean firstTry) throws KeyWordInputException{
+    String fileName = "keywords.txt";
+    if(!firstTry){
+      Scanner keyboard = new Scanner(System.in);
+      System.out.println("Try another file: ");
+      fileName = keyboard.nextLine();
+    }
     //Debug statement
     if ( DEBUG ) {
       System.out.println("keywordsInput called");
@@ -136,7 +225,7 @@ public class Lab002{
     String processingInput = "";
     
     try{
-      Scanner input = new Scanner(new File("keywords.txt"));
+      Scanner input = new Scanner(new File(fileName));
       
       while (input.hasNext()){
         processingInput += input.nextLine() + " ";
@@ -145,12 +234,10 @@ public class Lab002{
       result = processingInput.split(" +");
       return result;
     } catch ( IOException e ) { //Needed inorder to do file.io
-      System.out.println("File Exception, problem with keywords.txt, does it exist?");
+      System.out.println("File Exception, problem with keywords.txt, does it exist in " + System.getProperty("user.dir") + " ?");
+      return keywordsInput(false);
     }
-    throw new KeyWordInputException();
-    
   }
-  
 }
 
 
